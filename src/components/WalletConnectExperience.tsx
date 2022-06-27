@@ -2,7 +2,6 @@ import * as React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { INFURA_ID } from "../../constants/ids";
 import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
 
@@ -34,7 +33,7 @@ export default function WalletConnectExperience() {
     if (connector.connected) {
       const initProvider = async () => {
         const provider = new WalletConnectProvider({
-          infuraId: INFURA_ID,
+          infuraId: process.env.INFURA_ID,
           connector,
           qrcode: false,
         });
