@@ -27,7 +27,8 @@ const TransactionConfirmationDialog = ({
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>
-            Send {amount} to {receiver}
+            Send <Text style={styles.bold}>{amount} ETH</Text> to{' '}
+            <Text style={styles.bold}>{receiver}</Text>
           </Text>
           <View style={styles.button}>
             <Button title="Confirm" onPress={onConfirm} />
@@ -72,6 +73,9 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: 'black',
     textAlign: 'center',
+  },
+  bold: {
+    fontWeight: 'bold',
   },
 });
 

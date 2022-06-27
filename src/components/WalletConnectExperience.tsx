@@ -5,7 +5,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from './common/Button';
-import ScannToPayScreen from './ScannToPayScreen';
+import ScannToPayScreen from './ScanToPayScreen';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
@@ -37,16 +37,18 @@ export default function WalletConnectExperience() {
     }
   }, [connector.connect]);
 
+  const getBalance = async () => {
+    if (web3Provider && address) {
+      await setLoading(true);
+      const balance = await web3Provider.getBalance(address);
+      await setBalance(formatEther(balance));
+      await setLoading(false);
+    }
+  };
+
   useEffect(() => {
     try {
-      if (web3Provider && address) {
-        const getBalance = async () => {
-          const balance = await web3Provider.getBalance(address);
-          await setBalance(formatEther(balance));
-          await setLoading(false);
-        };
-        getBalance();
-      }
+      getBalance();
     } catch (e) {
       console.log(e);
     }
@@ -72,7 +74,7 @@ export default function WalletConnectExperience() {
           <Text>Address: {shortenAddress(address)}</Text>
           <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
           <Button onPress={killSession} title="Log out" style={styles.button} />
-          <ScannToPayScreen provider={web3Provider} />
+          <ScannToPayScreen provider={web3Provider} onPay={getBalance} />
         </>
       )}
     </View>

@@ -1,6 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
+import { parseEther } from '@ethersproject/units';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import Button from './common/Button';
 import TextInput from './common/TextInput';
 import QRCodeScanner from './QRCodeScanner';
@@ -8,9 +9,10 @@ import TransactionConfirmationDialog from './TransactionConfirmationDialog';
 
 interface IScannToPayScreen {
   provider: Web3Provider;
+  onPay: () => void;
 }
 
-const ScannToPayScreen = ({ provider }: IScannToPayScreen) => {
+const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
   const [walletUri, setWalletUri] = useState('');
   const [scanner, setScanner] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -30,20 +32,49 @@ const ScannToPayScreen = ({ provider }: IScannToPayScreen) => {
   };
 
   const sendTransaction = async () => {
-    setWalletUri('');
-    setAmount('');
+    setConfirmationModalOpen(false);
+    setLoading(true);
+    const signer = provider.getSigner();
+    const signerAddress = await provider.getSigner().getAddress();
+    try {
+      const transaction = await signer.sendTransaction({
+        from: signerAddress,
+        to: walletUri,
+        value: parseEther(amount),
+      });
+      setTransactionHash(transaction.hash);
+      const transactionReceipt = await transaction.wait();
+      if (transactionReceipt.status !== 1) {
+        console.log('Transaction failed!');
+      }
+    } catch (exception) {
+    } finally {
+      setWalletUri('');
+      setAmount('');
+      setTransactionHash('');
+      setLoading(false);
+      onPay();
+    }
   };
 
   return (
     <View style={styles.container}>
       <TextInput keyboardType="numeric" onChangeText={(text) => setAmount(text)} value={amount} />
+      {!!transactionHash && (
+        <Text
+          style={styles.transactionLabel}
+          onPress={() => Linking.openURL(`https://ropsten.etherscan.io/tx/${transactionHash}`)}
+        >
+          Panding Transaction
+        </Text>
+      )}
       <Button
         title="Scan"
         onPress={() => {
           toggleScanner();
           setWalletUri('');
         }}
-        disabled={!amount}
+        disabled={!amount || loading}
         style={styles.button}
       />
       {scanner && (
@@ -77,6 +108,13 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
+  },
+  transactionLabel: {
+    textDecorationLine: 'underline',
+    color: '#5A45FF',
+    width: '100%',
+    textAlign: 'center',
+    marginVertical: 8,
   },
 });
 
