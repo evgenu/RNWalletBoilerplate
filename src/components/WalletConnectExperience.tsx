@@ -2,10 +2,9 @@ import * as React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useWalletConnect } from "@walletconnect/react-native-dapp";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { INFURA_ID } from './constants/ids'
+import { INFURA_ID } from "../../constants/ids";
 import { Web3Provider } from "@ethersproject/providers";
 import { formatEther } from "@ethersproject/units";
-
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(
@@ -24,9 +23,11 @@ function Button({ onPress, label }: any) {
 
 export default function WalletConnectExperience() {
   const connector = useWalletConnect();
-  const [web3Provider, setWeb3Provider] = React.useState<Web3Provider | null>(null);
-  const [address, setAddress] = React.useState('');
-  const [balance, setBalance] = React.useState('');
+  const [web3Provider, setWeb3Provider] = React.useState<Web3Provider | null>(
+    null
+  );
+  const [address, setAddress] = React.useState("");
+  const [balance, setBalance] = React.useState("");
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -53,19 +54,19 @@ export default function WalletConnectExperience() {
       if (web3Provider && address) {
         const getBalance = async () => {
           const balance = await web3Provider.getBalance(address);
-          console.log('bal -> ', balance.toString());
           await setBalance(formatEther(balance));
           await setLoading(false);
         };
         getBalance();
       }
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }, [web3Provider, address]);
 
-  const connectWallet = React.useCallback(() => {
-    return connector.connect();
+  const connectWallet = React.useCallback(async () => {
+    const state = await connector.connect();
+    await setAddress(state.accounts[0]);
   }, [connector]);
 
   const killSession = React.useCallback(() => {

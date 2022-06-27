@@ -1,19 +1,15 @@
 import "./global";
-
-import * as React from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Platform } from "react-native";
-import WalletConnectProvider from "@walletconnect/react-native-dapp";
+import "@ethersproject/shims";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import WalletConnectExperience from "./WalletConnectExperience";
-
-import '@ethersproject/shims';
+import WalletConnectProvider from "@walletconnect/react-native-dapp";
+import { StatusBar } from "expo-status-bar";
+import * as React from "react";
+import { Platform, StyleSheet, View } from "react-native";
+import WalletConnectExperience from "./src/components/WalletConnectExperience";
 
 const SCHEME_FROM_APP_JSON = "walletconnect";
 
 export default function App() {
-
   return (
     <WalletConnectProvider
       redirectUrl={
