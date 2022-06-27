@@ -2,15 +2,15 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 interface IButtonProps {
-  label: string;
+  title: string;
   style?: any;
   onPress: () => void;
 }
 
-const Button = ({ label, style, onPress }: IButtonProps) => {
+const Button = ({ title, style, onPress }: IButtonProps) => {
   return (
     <TouchableOpacity onPress={onPress} style={{ ...styles.button, ...(style ? style : {}) }}>
-      <Text style={styles.text}>{label}</Text>
+      <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
 };
