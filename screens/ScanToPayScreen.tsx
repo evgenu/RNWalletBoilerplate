@@ -65,7 +65,7 @@ const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
           style={styles.transactionLabel}
           onPress={() => Linking.openURL(`https://ropsten.etherscan.io/tx/${transactionHash}`)}
         >
-          Panding Transaction
+          Pending Transaction
         </Text>
       )}
       <Button
