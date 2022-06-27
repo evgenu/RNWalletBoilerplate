@@ -1,30 +1,26 @@
-import * as React from 'react';
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, View } from 'react-native';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
+import QRCodeScanner from './QRCodeScanner';
+import Button from './common/Button';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 };
 
-function Button({ onPress, label }: any) {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Text style={styles.text}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
 export default function WalletConnectExperience() {
   const connector = useWalletConnect();
-  const [web3Provider, setWeb3Provider] = React.useState<Web3Provider | null>(null);
-  const [address, setAddress] = React.useState('');
-  const [balance, setBalance] = React.useState('');
-  const [loading, setLoading] = React.useState(true);
+  const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
+  const [scanner, setScanner] = useState(false);
+  const [address, setAddress] = useState('');
+  const [balance, setBalance] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [walletUri, setWalletUri] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (connector.connected) {
       const initProvider = async () => {
         const provider = new WalletConnectProvider({
@@ -43,7 +39,7 @@ export default function WalletConnectExperience() {
     }
   }, [connector.connect]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       if (web3Provider && address) {
         const getBalance = async () => {
@@ -58,41 +54,66 @@ export default function WalletConnectExperience() {
     }
   }, [web3Provider, address]);
 
-  const connectWallet = React.useCallback(async () => {
+  const connectWallet = useCallback(async () => {
     const state = await connector.connect();
     await setAddress(state.accounts[0]);
   }, [connector]);
 
-  const killSession = React.useCallback(() => {
+  const killSession = useCallback(() => {
     return connector.killSession();
   }, [connector]);
 
+  const toggleScanner = () => {
+    setScanner((prevState) => !prevState);
+  };
+
+  const onQRCodeScan = async (data: string) => {
+    const address = data.split(':')[1];
+    setWalletUri(address);
+    toggleScanner();
+    // setConfirmationModalOpen(true);
+  };
+
   return (
-    <>
-      {!connector.connected ? (
+    <View style={{ ...styles.container, ...styles.fullHeight }}>
+      {!connector.connected && !loading && (
         <Button onPress={connectWallet} label="Connect a wallet" />
-      ) : (
+      )}
+      {connector.connected && loading && <Text>Loading...</Text>}
+      {connector.connected && !loading && (
         <>
-          <Text>{shortenAddress(connector.accounts[0])}</Text>
-          <Text>{loading ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
-          <Button onPress={killSession} label="Log out" />
+          <Text>Address: {shortenAddress(address)}</Text>
+          <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
+          <Button onPress={killSession} label="Log out" style={styles.button} />
+          <Button label="Scan to send O.5 ETH" onPress={toggleScanner} style={styles.button} />
+          {!!walletUri && <Text>Address to send: {walletUri}</Text>}
+          {scanner && (
+            <QRCodeScanner
+              onError={() => {
+                console.log('Error!');
+                toggleScanner();
+              }}
+              onClose={toggleScanner}
+              onScann={onQRCodeScan}
+            />
+          )}
         </>
       )}
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: '#5A45FF',
-    color: '#FFFFFF',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  fullHeight: {
+    height: '100%',
   },
-  text: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    width: '100%',
+    marginHorizontal: 16,
+    marginVertical: 8,
   },
 });

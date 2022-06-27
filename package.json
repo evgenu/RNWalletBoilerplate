@@ -25,6 +25,7 @@
     "assert": "^2.0.0",
     "ethers": "^5.6.9",
     "expo": "~44.0.0",
+    "expo-barcode-scanner": "^11.3.0",
     "expo-crypto-polyfills": "^1.1.0",
     "expo-status-bar": "~1.2.0",
     "noty": "^3.2.0-beta-deprecated",
