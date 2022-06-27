@@ -1,15 +1,12 @@
-import * as React from "react";
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useWalletConnect } from "@walletconnect/react-native-dapp";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { Web3Provider } from "@ethersproject/providers";
-import { formatEther } from "@ethersproject/units";
+import * as React from 'react';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { Web3Provider } from '@ethersproject/providers';
+import { formatEther } from '@ethersproject/units';
 
 const shortenAddress = (address: string) => {
-  return `${address.slice(0, 6)}...${address.slice(
-    address.length - 4,
-    address.length
-  )}`;
+  return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 };
 
 function Button({ onPress, label }: any) {
@@ -22,11 +19,9 @@ function Button({ onPress, label }: any) {
 
 export default function WalletConnectExperience() {
   const connector = useWalletConnect();
-  const [web3Provider, setWeb3Provider] = React.useState<Web3Provider | null>(
-    null
-  );
-  const [address, setAddress] = React.useState("");
-  const [balance, setBalance] = React.useState("");
+  const [web3Provider, setWeb3Provider] = React.useState<Web3Provider | null>(null);
+  const [address, setAddress] = React.useState('');
+  const [balance, setBalance] = React.useState('');
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -79,7 +74,7 @@ export default function WalletConnectExperience() {
       ) : (
         <>
           <Text>{shortenAddress(connector.accounts[0])}</Text>
-          <Text>Balance: {balance} ETH</Text>
+          <Text>{loading ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
           <Button onPress={killSession} label="Log out" />
         </>
       )}
@@ -89,15 +84,15 @@ export default function WalletConnectExperience() {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#5A45FF",
-    color: "#FFFFFF",
+    backgroundColor: '#5A45FF',
+    color: '#FFFFFF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   text: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });
