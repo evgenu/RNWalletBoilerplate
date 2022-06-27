@@ -5,7 +5,7 @@ import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Platform, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import WalletConnectExperience from './src/components/WalletConnectExperience';
+import WalletConnectScreen from './screens/WalletConnectScreen';
 
 const SCHEME_FROM_APP_JSON = 'walletconnect';
 
@@ -22,7 +22,7 @@ export default function App() {
           contentContainerStyle={styles.fullHeight}
           contentInsetAdjustmentBehavior="automatic"
         >
-          <WalletConnectExperience />
+          <WalletConnectScreen />
           <StatusBar style="auto" />
         </ScrollView>
       </SafeAreaView>

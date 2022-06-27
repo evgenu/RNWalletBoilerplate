@@ -96,4 +96,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 8,
   },
+  accountInformationContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accountInformation: {
+    textAlign: 'center',
+    fontSize: 24,
+  },
 });
