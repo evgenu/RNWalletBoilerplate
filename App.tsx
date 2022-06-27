@@ -4,8 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import WalletConnectProvider from "@walletconnect/react-native-dapp";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Platform, StyleSheet, View } from "react-native";
-import WalletConnectExperience from "./src/components/WalletConnectExperience";
+import { Platform, SafeAreaView, StyleSheet } from "react-native";
+import WalletConnectExperience from "./screens/WalletConnectScreen";
 
 const SCHEME_FROM_APP_JSON = "walletconnect";
 
@@ -21,10 +21,10 @@ export default function App() {
         asyncStorage: AsyncStorage as any,
       }}
     >
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <WalletConnectExperience />
         <StatusBar style="auto" />
-      </View>
+      </SafeAreaView>
     </WalletConnectProvider>
   );
 }

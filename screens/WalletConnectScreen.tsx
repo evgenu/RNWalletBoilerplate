@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
+import LoginButton from '../components/LoginButton';
+import LogoutButton from '../components/LogoutButton';
+import LoginTitle from '../components/LoginTitle';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
@@ -70,12 +73,17 @@ export default function WalletConnectExperience() {
   return (
     <>
       {!connector.connected ? (
-        <Button onPress={connectWallet} label="Connect a wallet" />
+        <>
+          <LoginTitle />
+          <LoginButton onPress={connectWallet} />
+        </>
       ) : (
         <>
-          <Text>{shortenAddress(connector.accounts[0])}</Text>
-          <Text>{loading ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
-          <Button onPress={killSession} label="Log out" />
+          <View style={styles.accountInformationContainer}>
+            <Text style={styles.accountInformation}>{shortenAddress(connector.accounts[0])}</Text>
+            <Text style={styles.accountInformation}>{loading ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
+          </View>
+          <LogoutButton onPress={killSession} />
         </>
       )}
     </>
@@ -95,4 +103,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  accountInformationContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  accountInformation: {
+    textAlign: 'center',
+    fontSize: 24
+  }
 });
