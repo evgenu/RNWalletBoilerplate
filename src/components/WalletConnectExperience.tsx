@@ -5,8 +5,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from './common/Button';
-import QRCodeScanner from './QRCodeScanner';
-import TransactionConfirmationDialog from './TransactionConfirmationDialog';
+import ScannToPayScreen from './ScannToPayScreen';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
@@ -15,12 +14,9 @@ const shortenAddress = (address: string) => {
 export default function WalletConnectExperience() {
   const connector = useWalletConnect();
   const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
-  const [scanner, setScanner] = useState(false);
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState('');
   const [loading, setLoading] = useState(true);
-  const [walletUri, setWalletUri] = useState('');
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   useEffect(() => {
     if (connector.connected) {
@@ -65,59 +61,18 @@ export default function WalletConnectExperience() {
     return connector.killSession();
   }, [connector]);
 
-  const toggleScanner = () => {
-    setScanner((prevState) => !prevState);
-  };
-
-  const onQRCodeScan = async (data: string) => {
-    const address = data.split(':')[1];
-    setWalletUri(address);
-    toggleScanner();
-    setConfirmationModalOpen(true);
-  };
-
-  const sendTransaction = async () => {
-    console.log('Send to -> ', walletUri);
-  };
-
   return (
     <View style={{ ...styles.container, ...styles.fullHeight }}>
       {!connector.connected && !loading && (
         <Button onPress={connectWallet} title="Connect a wallet" />
       )}
       {connector.connected && loading && <Text>Loading...</Text>}
-      {connector.connected && !loading && (
+      {connector.connected && !loading && web3Provider && (
         <>
           <Text>Address: {shortenAddress(address)}</Text>
           <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
           <Button onPress={killSession} title="Log out" style={styles.button} />
-          <Button
-            title="Scan to send O.5 ETH"
-            onPress={() => {
-              toggleScanner();
-              setWalletUri('');
-            }}
-            style={styles.button}
-          />
-          {scanner && (
-            <QRCodeScanner
-              onError={() => {
-                console.log('Error!');
-                toggleScanner();
-              }}
-              onClose={toggleScanner}
-              onScann={onQRCodeScan}
-            />
-          )}
-          <TransactionConfirmationDialog
-            open={confirmationModalOpen}
-            receiver={walletUri}
-            onConfirm={sendTransaction}
-            onClose={() => {
-              setConfirmationModalOpen(false);
-              setWalletUri('');
-            }}
-          />
+          <ScannToPayScreen provider={web3Provider} />
         </>
       )}
     </View>
@@ -129,6 +84,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   container: {
+    flex: 1,
+    marginVertical: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },

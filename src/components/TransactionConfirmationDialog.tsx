@@ -5,6 +5,7 @@ import Button from './common/Button';
 interface ITransactionConfirmationDialogProps {
   open: boolean;
   receiver: string;
+  amount: string;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -12,6 +13,7 @@ interface ITransactionConfirmationDialogProps {
 const TransactionConfirmationDialog = ({
   open,
   receiver,
+  amount,
   onConfirm,
   onClose,
 }: ITransactionConfirmationDialogProps) => {
@@ -24,7 +26,9 @@ const TransactionConfirmationDialog = ({
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>Send 0.5 ETH to {receiver}</Text>
+          <Text style={styles.modalText}>
+            Send {amount} to {receiver}
+          </Text>
           <View style={styles.button}>
             <Button title="Confirm" onPress={onConfirm} />
           </View>
