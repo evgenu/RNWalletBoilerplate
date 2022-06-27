@@ -1,11 +1,12 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, View } from 'react-native';
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
-import QRCodeScanner from './QRCodeScanner';
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import React, { useCallback, useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import Button from './common/Button';
+import QRCodeScanner from './QRCodeScanner';
+import TransactionConfirmationDialog from './TransactionConfirmationDialog';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
@@ -19,6 +20,7 @@ export default function WalletConnectExperience() {
   const [balance, setBalance] = useState('');
   const [loading, setLoading] = useState(true);
   const [walletUri, setWalletUri] = useState('');
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   useEffect(() => {
     if (connector.connected) {
@@ -71,22 +73,32 @@ export default function WalletConnectExperience() {
     const address = data.split(':')[1];
     setWalletUri(address);
     toggleScanner();
-    // setConfirmationModalOpen(true);
+    setConfirmationModalOpen(true);
+  };
+
+  const sendTransaction = async () => {
+    console.log('Send to -> ', walletUri);
   };
 
   return (
     <View style={{ ...styles.container, ...styles.fullHeight }}>
       {!connector.connected && !loading && (
-        <Button onPress={connectWallet} label="Connect a wallet" />
+        <Button onPress={connectWallet} title="Connect a wallet" />
       )}
       {connector.connected && loading && <Text>Loading...</Text>}
       {connector.connected && !loading && (
         <>
           <Text>Address: {shortenAddress(address)}</Text>
           <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
-          <Button onPress={killSession} label="Log out" style={styles.button} />
-          <Button label="Scan to send O.5 ETH" onPress={toggleScanner} style={styles.button} />
-          {!!walletUri && <Text>Address to send: {walletUri}</Text>}
+          <Button onPress={killSession} title="Log out" style={styles.button} />
+          <Button
+            title="Scan to send O.5 ETH"
+            onPress={() => {
+              toggleScanner();
+              setWalletUri('');
+            }}
+            style={styles.button}
+          />
           {scanner && (
             <QRCodeScanner
               onError={() => {
@@ -97,6 +109,15 @@ export default function WalletConnectExperience() {
               onScann={onQRCodeScan}
             />
           )}
+          <TransactionConfirmationDialog
+            open={confirmationModalOpen}
+            receiver={walletUri}
+            onConfirm={sendTransaction}
+            onClose={() => {
+              setConfirmationModalOpen(false);
+              setWalletUri('');
+            }}
+          />
         </>
       )}
     </View>
