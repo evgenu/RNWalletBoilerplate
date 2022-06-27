@@ -36,8 +36,14 @@ const QRCodeScanner = ({ onScann, onClose, onError }: IQRCodeScannerProps) => {
 
   return (
     <View style={styles.container}>
-      <BarCodeScanner onBarCodeScanned={onSuccess} style={StyleSheet.absoluteFillObject} />
-      <Button label="Close" style={styles.button} onPress={onClose} />
+      {hasPermission === null && <Text>Requesting for camera permission</Text>}
+      {hasPermission != null && !hasPermission && <Text>No access to camera</Text>}
+      {hasPermission && (
+        <>
+          <BarCodeScanner onBarCodeScanned={onSuccess} style={StyleSheet.absoluteFillObject} />
+          <Button title="Close" style={styles.button} onPress={onClose} />
+        </>
+      )}
     </View>
   );
 };
