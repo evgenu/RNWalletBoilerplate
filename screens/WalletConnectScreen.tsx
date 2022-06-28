@@ -4,7 +4,8 @@ import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Button from './common/Button';
+import Button from '../components/common/Button';
+import LoginTitle from '../components/LoginTitle';
 import ScannToPayScreen from './ScanToPayScreen';
 
 const shortenAddress = (address: string) => {
@@ -66,7 +67,10 @@ export default function WalletConnectExperience() {
   return (
     <View style={{ ...styles.container, ...styles.fullHeight }}>
       {!connector.connected && !loading && (
-        <Button onPress={connectWallet} title="Connect a wallet" />
+        <>
+          <LoginTitle />
+          <Button onPress={connectWallet} title="Connect a wallet" />
+        </>
       )}
       {connector.connected && loading && <Text>Loading...</Text>}
       {connector.connected && !loading && web3Provider && (

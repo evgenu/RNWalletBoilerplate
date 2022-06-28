@@ -2,8 +2,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 import React, { useState } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
-import Button from './common/Button';
-import TextInput from './common/TextInput';
+import Button from '../components/common/Button';
+import TextInput from '../components/common/TextInput';
 import QRCodeScanner from './QRCodeScanner';
 import TransactionConfirmationDialog from './TransactionConfirmationDialog';
 

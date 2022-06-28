@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { BarCodeEvent, BarCodeScanner } from 'expo-barcode-scanner';
-import Button from './common/Button';
+import Button from '../components/common/Button';
 
 interface IQRCodeScannerProps {
   onScann: (data: string) => void;
