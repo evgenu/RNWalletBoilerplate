@@ -1,23 +1,29 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { formatEther } from '@ethersproject/units';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/common/Button';
-import LoginTitle from '../components/LoginTitle';
-import ScannToPayScreen from './ScanToPayScreen';
+import { ApplicationScreens } from '../consts';
+import ApplicationContext from '../context';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 };
 
-export default function WalletConnectExperience() {
+const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
+  const {
+    web3Provider,
+    address,
+    balance,
+    balanceLoading,
+    fetchBalance,
+    setAddress,
+    setWeb3Provider,
+  } = useContext(ApplicationContext);
   const connector = useWalletConnect();
-  const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
-  const [address, setAddress] = useState('');
-  const [balance, setBalance] = useState('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (connector.connected) {
@@ -29,61 +35,48 @@ export default function WalletConnectExperience() {
         });
         await provider.enable();
         const web3Provider = new Web3Provider(provider);
-        await setWeb3Provider(web3Provider);
+        setWeb3Provider(web3Provider);
         if (!address) {
           await setAddress(connector.accounts[0]);
         }
       };
       initProvider();
     }
-  }, [connector.connect]);
-
-  const getBalance = async () => {
-    if (web3Provider && address) {
-      await setLoading(true);
-      const balance = await web3Provider.getBalance(address);
-      await setBalance(formatEther(balance));
-      await setLoading(false);
-    }
-  };
+  }, [connector.connected]);
 
   useEffect(() => {
-    try {
-      getBalance();
-    } catch (e) {
-      console.log(e);
-    }
+    fetchBalance();
   }, [web3Provider, address]);
 
-  const connectWallet = useCallback(async () => {
-    const state = await connector.connect();
-    await setAddress(state.accounts[0]);
-  }, [connector]);
-
   const killSession = useCallback(() => {
-    return connector.killSession();
+    connector.killSession();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ApplicationScreens.Welcome }],
+    });
   }, [connector]);
 
   return (
     <View style={{ ...styles.container, ...styles.fullHeight }}>
-      {!connector.connected && !loading && (
-        <>
-          <LoginTitle />
-          <Button onPress={connectWallet} title="Connect a wallet" />
-        </>
-      )}
-      {connector.connected && loading && <Text>Loading...</Text>}
-      {connector.connected && !loading && web3Provider && (
+      {balanceLoading ? (
+        <Text>Loading...</Text>
+      ) : web3Provider ? (
         <>
           <Text>Address: {shortenAddress(address)}</Text>
           <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
+          <Button
+            onPress={() => {
+              navigation.navigate(ApplicationScreens.ScanToPay);
+            }}
+            title="Scan"
+            style={styles.button}
+          />
           <Button onPress={killSession} title="Log out" style={styles.button} />
-          <ScannToPayScreen provider={web3Provider} onPay={getBalance} />
         </>
-      )}
+      ) : null}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   fullHeight: {
@@ -91,9 +84,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginVertical: 32,
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 8,
   },
   button: {
     width: '100%',
@@ -110,3 +103,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+
+export default HomeScreen;

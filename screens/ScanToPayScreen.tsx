@@ -1,24 +1,25 @@
-import { Web3Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
-import React, { useState } from 'react';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useContext, useEffect, useState } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 import Button from '../components/common/Button';
 import TextInput from '../components/common/TextInput';
 import QRCodeScanner from '../components/QRCodeScanner';
 import TransactionConfirmationDialog from '../components/TransactionConfirmationDialog';
+import { ApplicationScreens } from '../consts';
+import ApplicationContext from '../context';
 
-interface IScannToPayScreen {
-  provider: Web3Provider;
-  onPay: () => void;
-}
-
-const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
+const ScannToPayScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
+  const { web3Provider, balance, fetchBalance } = useContext(ApplicationContext);
   const [walletUri, setWalletUri] = useState('');
   const [scanner, setScanner] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [transactionHash, setTransactionHash] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => toggleScanner, []);
 
   const toggleScanner = () => {
     setScanner((prevState) => !prevState);
@@ -32,10 +33,13 @@ const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
   };
 
   const sendTransaction = async () => {
+    if (!web3Provider) {
+      return;
+    }
     setConfirmationModalOpen(false);
     setLoading(true);
-    const signer = provider.getSigner();
-    const signerAddress = await provider.getSigner().getAddress();
+    const signer = web3Provider.getSigner();
+    const signerAddress = await web3Provider.getSigner().getAddress();
     try {
       const transaction = await signer.sendTransaction({
         from: signerAddress,
@@ -47,18 +51,27 @@ const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
       if (transactionReceipt.status !== 1) {
         console.log('Transaction failed!');
       }
-    } catch (exception) {
+    } catch (exception: any) {
+      let message = 'Something weng wron! Please try again!';
+      if (exception.error && exception.error.message) {
+        message = exception.error.message.split(':')[1].trim();
+      } else if (exception.message) {
+        message = exception.message.split(':')[1].trim();
+      }
+      console.log(message);
     } finally {
       setWalletUri('');
       setAmount('');
       setTransactionHash('');
       setLoading(false);
-      onPay();
+      await fetchBalance();
+      navigation.navigate(ApplicationScreens.Home);
     }
   };
 
   return (
     <View style={styles.container}>
+      <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
       <TextInput
         keyboardType="numeric"
         disabled={loading}
@@ -109,7 +122,9 @@ const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
   },
   button: {
     width: '100%',

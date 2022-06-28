@@ -1,15 +1,43 @@
-import './global';
+import { Web3Provider } from '@ethersproject/providers';
 import '@ethersproject/shims';
+import { formatEther } from '@ethersproject/units';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
-import { Platform, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import WalletConnectScreen from './screens/WalletConnectScreen';
+import React, { useState } from 'react';
+import { Platform } from 'react-native';
+import { ApplicationScreens } from './consts';
+import ApplicationContext from './context';
+import './global';
+import WalletConnectScreen from './screens/HomeScreen';
+import ScannToPayScreen from './screens/ScanToPayScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
+
+const Stack = createNativeStackNavigator();
 
 const SCHEME_FROM_APP_JSON = 'walletconnect';
 
 export default function App() {
+  const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
+  const [balance, setBalance] = useState('');
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [address, setAddress] = useState('');
+
+  const getBalance = async () => {
+    if (web3Provider && address && !balanceLoading) {
+      try {
+        await setBalanceLoading(true);
+        const balance = await web3Provider.getBalance(address);
+        await setBalance(formatEther(balance));
+        await setBalanceLoading(false);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
   return (
     <WalletConnectProvider
       redirectUrl={Platform.OS === 'web' ? window.location.origin : `${SCHEME_FROM_APP_JSON}://`}
@@ -17,22 +45,30 @@ export default function App() {
         asyncStorage: AsyncStorage as any,
       }}
     >
-      <SafeAreaView>
-        <ScrollView
-          contentContainerStyle={styles.fullHeight}
-          contentInsetAdjustmentBehavior="automatic"
-        >
-          <WalletConnectScreen />
+      <ApplicationContext.Provider
+        value={{
+          web3Provider,
+          balance,
+          balanceLoading,
+          address,
+          fetchBalance: getBalance,
+          setAddress,
+          setWeb3Provider,
+        }}
+      >
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name={ApplicationScreens.Welcome}
+              component={WelcomeScreen}
+              options={{ header: () => null }}
+            />
+            <Stack.Screen name={ApplicationScreens.Home} component={WalletConnectScreen} />
+            <Stack.Screen name={ApplicationScreens.ScanToPay} component={ScannToPayScreen} />
+          </Stack.Navigator>
           <StatusBar style="auto" />
-        </ScrollView>
-      </SafeAreaView>
+        </NavigationContainer>
+      </ApplicationContext.Provider>
     </WalletConnectProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  fullHeight: {
-    height: '100%',
-    padding: 8,
-  },
-});
