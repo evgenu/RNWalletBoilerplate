@@ -1,13 +1,70 @@
+import { isAddress } from '@ethersproject/address';
+import { formatEther } from '@ethersproject/units';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import LIRARY from '../abis/Library.json';
+import LIRARY_TOKEN from '../abis/LibraryToken.json';
 import Button from '../components/common/Button';
 import { ApplicationScreens } from '../consts';
+import ApplicationContext from '../context';
+import { getContract } from '../helpers/ethers';
 
 const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
+  const {
+    address,
+    web3Provider,
+    tokenContract,
+    libraryBalance,
+    setLibraryBalance,
+    setLibraryContract,
+    setTokenContract,
+  } = useContext(ApplicationContext);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    initContractInstances();
+  }, []);
+
+  useEffect(() => {
+    getBalance();
+  }, [tokenContract]);
+
+  const getBalance = async () => {
+    if (tokenContract) {
+      try {
+        const libraryBalance = await tokenContract.balanceOf(process.env.LIBRARY_CONTRACT_ADDRESS);
+        setLibraryBalance(formatEther(libraryBalance));
+        setLoading(false);
+      } catch (error) {
+        console.log('Error -> ', JSON.stringify(error));
+      }
+    }
+  };
+
+  const initContractInstances = () => {
+    if (isAddress(address) && web3Provider) {
+      const libraryContract = getContract(
+        process.env.LIBRARY_CONTRACT_ADDRESS || '',
+        LIRARY.abi,
+        web3Provider,
+        address
+      );
+      const tokenContract = getContract(
+        process.env.LIBRARY_TOKEN_ADDRESS || '',
+        LIRARY_TOKEN.abi,
+        web3Provider,
+        address
+      );
+      setTokenContract(tokenContract);
+      setLibraryContract(libraryContract);
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <Text>Library balance: {loading ? 'Loading...' : libraryBalance}</Text>
       <Button
         style={styles.button}
         title="Add book"
