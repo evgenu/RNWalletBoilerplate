@@ -8,10 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/common/Button';
 import { ApplicationScreens } from '../consts';
 import ApplicationContext from '../context';
-
-const shortenAddress = (address: string) => {
-  return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
-};
+import { shortenAddress } from '../helpers/ethers';
 
 const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   const {

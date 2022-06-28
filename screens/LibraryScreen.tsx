@@ -89,7 +89,7 @@ const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) =>
 
   return (
     <View style={styles.container}>
-      <Text>Library balance: {loading ? 'Loading...' : libraryBalance}</Text>
+      <Text>Library balance: {loading ? 'Loading...' : `${libraryBalance} LIB`}</Text>
       <Button
         style={styles.button}
         title="Add book"
