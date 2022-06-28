@@ -71,6 +71,13 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
             title="Scan"
             style={styles.button}
           />
+          <Button
+            onPress={() => {
+              navigation.navigate(ApplicationScreens.Library);
+            }}
+            title="Library"
+            style={styles.button}
+          />
           <Button onPress={killSession} title="Log out" style={styles.button} />
         </>
       ) : null}

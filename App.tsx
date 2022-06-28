@@ -1,5 +1,6 @@
-import { Web3Provider } from '@ethersproject/providers';
+import './global';
 import '@ethersproject/shims';
+import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
@@ -10,8 +11,8 @@ import React, { useState } from 'react';
 import { Platform } from 'react-native';
 import { ApplicationScreens } from './consts';
 import ApplicationContext from './context';
-import './global';
-import WalletConnectScreen from './screens/HomeScreen';
+import HomeScreen from './screens/HomeScreen';
+import LibraryScreen from './screens/LibraryScreen';
 import ScannToPayScreen from './screens/ScanToPayScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
 
@@ -63,8 +64,9 @@ export default function App() {
               component={WelcomeScreen}
               options={{ header: () => null }}
             />
-            <Stack.Screen name={ApplicationScreens.Home} component={WalletConnectScreen} />
+            <Stack.Screen name={ApplicationScreens.Home} component={HomeScreen} />
             <Stack.Screen name={ApplicationScreens.ScanToPay} component={ScannToPayScreen} />
+            <Stack.Screen name={ApplicationScreens.Library} component={LibraryScreen} />
           </Stack.Navigator>
           <StatusBar style="auto" />
         </NavigationContainer>
