@@ -1,11 +1,14 @@
 import { createContext } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
+import { Contract } from '@ethersproject/contracts';
 
 interface IApplicationContext {
   web3Provider: Web3Provider | null;
   address: string;
   balance: string;
   balanceLoading: boolean;
+  libraryContract: Contract | null;
+  setLibraryContract: (value: Contract) => void;
   fetchBalance: () => Promise<void>;
   setAddress: (value: string) => void;
   setWeb3Provider: (value: Web3Provider) => void;
@@ -16,6 +19,8 @@ const ApplicationContext = createContext<IApplicationContext>({
   address: '',
   balance: '',
   balanceLoading: false,
+  libraryContract: null,
+  setLibraryContract: () => {},
   fetchBalance: () => Promise.resolve(),
   setAddress: () => {},
   setWeb3Provider: () => {},

@@ -1,5 +1,6 @@
 import './global';
 import '@ethersproject/shims';
+import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +25,7 @@ const SCHEME_FROM_APP_JSON = 'walletconnect';
 
 export default function App() {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
+  const [libraryContract, setLibraryContract] = useState<Contract | null>(null);
   const [balance, setBalance] = useState('');
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [address, setAddress] = useState('');
@@ -54,6 +56,8 @@ export default function App() {
           balance,
           balanceLoading,
           address,
+          libraryContract,
+          setLibraryContract,
           fetchBalance: getBalance,
           setAddress,
           setWeb3Provider,
