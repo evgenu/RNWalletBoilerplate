@@ -66,7 +66,7 @@ export const prepareSignature = async (
 
   const message = {
     owner: address,
-    spender: process.env.REACT_APP_CONTRACT_ADDRESS,
+    spender: process.env.LIBRARY_CONTRACT_ADDRESS,
     value: value.toString(),
     nonce: nonce.toHexString(),
     deadline,
@@ -93,4 +93,8 @@ export const prepareSignature = async (
   };
 
   return preparedSignature;
+};
+
+export const shortenAddress = (address: string) => {
+  return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 };
