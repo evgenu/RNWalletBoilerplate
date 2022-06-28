@@ -1,10 +1,27 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import Button from '../components/common/Button';
+import { ApplicationScreens } from '../consts';
 
-const LibraryScreen = () => {
+const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   return (
     <View style={styles.container}>
-      <Text>LibraryScreen</Text>
+      <Button
+        style={styles.button}
+        title="Add book"
+        onPress={() => {
+          navigation.navigate(ApplicationScreens.AddBook);
+        }}
+      />
+      <Button
+        style={styles.button}
+        title="Books overview"
+        onPress={() => {
+          navigation.navigate(ApplicationScreens.BooksOverview);
+        }}
+      />
     </View>
   );
 };
@@ -15,6 +32,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
+  },
+  button: {
+    width: '100%',
+    margin: 8,
   },
 });
 

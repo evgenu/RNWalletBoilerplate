@@ -1,6 +1,8 @@
 export enum ApplicationScreens {
   Welcome = 'Welcome',
   Home = 'Home',
-  ScanToPay = 'ScanToPay',
+  ScanToPay = 'Scan To Pay',
   Library = 'Library',
+  AddBook = 'Add Book',
+  BooksOverview = 'Books overview',
 }
