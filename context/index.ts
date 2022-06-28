@@ -8,7 +8,9 @@ interface IApplicationContext {
   balance: string;
   balanceLoading: boolean;
   libraryContract: Contract | null;
+  tokenContract: Contract | null;
   setLibraryContract: (value: Contract) => void;
+  setTokenContract: (value: Contract) => void;
   fetchBalance: () => Promise<void>;
   setAddress: (value: string) => void;
   setWeb3Provider: (value: Web3Provider) => void;
@@ -20,7 +22,9 @@ const ApplicationContext = createContext<IApplicationContext>({
   balance: '',
   balanceLoading: false,
   libraryContract: null,
+  tokenContract: null,
   setLibraryContract: () => {},
+  setTokenContract: () => {},
   fetchBalance: () => Promise.resolve(),
   setAddress: () => {},
   setWeb3Provider: () => {},
