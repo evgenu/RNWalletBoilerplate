@@ -1,24 +1,16 @@
-import * as React from 'react';
-import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
-import { useWalletConnect } from '@walletconnect/react-native-dapp';
-import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
+import { useWalletConnect } from '@walletconnect/react-native-dapp';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import * as React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import LoginButton from '../components/LoginButton';
-import LogoutButton from '../components/LogoutButton';
 import LoginTitle from '../components/LoginTitle';
+import LogoutButton from '../components/LogoutButton';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 };
-
-function Button({ onPress, label }: any) {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Text style={styles.text}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
 
 export default function WalletConnectExperience() {
   const connector = useWalletConnect();
@@ -51,12 +43,13 @@ export default function WalletConnectExperience() {
       if (web3Provider && address) {
         const getBalance = async () => {
           const balance = await web3Provider.getBalance(address);
-          await setBalance(formatEther(balance));
+          await setBalance(Number(formatEther(balance)).toFixed(4));
           await setLoading(false);
         };
         getBalance();
       }
     } catch (e) {
+      setLoading(false);
       console.log(e);
     }
   }, [web3Provider, address]);
@@ -81,7 +74,9 @@ export default function WalletConnectExperience() {
         <>
           <View style={styles.accountInformationContainer}>
             <Text style={styles.accountInformation}>{shortenAddress(connector.accounts[0])}</Text>
-            <Text style={styles.accountInformation}>{loading ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
+            <Text style={styles.accountInformation}>
+              {loading ? 'Loading...' : `Balance: ${balance || 'N/A'} ETH`}
+            </Text>
           </View>
           <LogoutButton onPress={killSession} />
         </>
@@ -106,10 +101,10 @@ const styles = StyleSheet.create({
   accountInformationContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   accountInformation: {
     textAlign: 'center',
-    fontSize: 24
-  }
+    fontSize: 24,
+  },
 });
