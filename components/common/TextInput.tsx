@@ -5,12 +5,16 @@ interface ITextInputProps extends TextInputProps {
   disabled?: boolean;
 }
 
-const TextInput = ({ disabled, ...rest }: ITextInputProps) => {
+const TextInput = ({ disabled, style, ...rest }: ITextInputProps) => {
   return (
     <NativeTextInput
       editable={!disabled}
       selectTextOnFocus={!disabled}
-      style={{ ...styles.input, ...(disabled ? styles.disabled : {}) }}
+      style={{
+        ...styles.input,
+        ...(disabled ? styles.disabled : {}),
+        ...(style ? (style as any) : {}),
+      }}
       selectionColor="#5A45FF"
       {...rest}
     />
