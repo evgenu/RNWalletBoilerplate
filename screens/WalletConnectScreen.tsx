@@ -16,7 +16,7 @@ export default function WalletConnectExperience() {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (connector.connected) {
