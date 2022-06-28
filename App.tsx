@@ -26,7 +26,9 @@ const SCHEME_FROM_APP_JSON = 'walletconnect';
 export default function App() {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
   const [libraryContract, setLibraryContract] = useState<Contract | null>(null);
-  const [balance, setBalance] = useState('');
+  const [tokenContract, setTokenContract] = useState<Contract | null>(null);
+  const [addressBalance, setAddressBalance] = useState('');
+  const [libraryBalance, setLibraryBalance] = useState('');
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [address, setAddress] = useState('');
 
@@ -35,7 +37,7 @@ export default function App() {
       try {
         await setBalanceLoading(true);
         const balance = await web3Provider.getBalance(address);
-        await setBalance(formatEther(balance));
+        await setAddressBalance(formatEther(balance));
         await setBalanceLoading(false);
       } catch (e) {
         console.log(e);
@@ -53,13 +55,17 @@ export default function App() {
       <ApplicationContext.Provider
         value={{
           web3Provider,
-          balance,
+          addressBalance,
           balanceLoading,
           address,
           libraryContract,
+          tokenContract,
+          libraryBalance,
+          setTokenContract,
           setLibraryContract,
           fetchBalance: getBalance,
           setAddress,
+          setLibraryBalance,
           setWeb3Provider,
         }}
       >

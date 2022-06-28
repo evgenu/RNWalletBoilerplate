@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   const {
     web3Provider,
     address,
-    balance,
+    addressBalance,
     balanceLoading,
     fetchBalance,
     setAddress,
@@ -63,7 +63,7 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
       ) : web3Provider ? (
         <>
           <Text>Address: {shortenAddress(address)}</Text>
-          <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
+          <Text>{!addressBalance ? 'Loading...' : `Balance: ${addressBalance} ETH`}</Text>
           <Button
             onPress={() => {
               navigation.navigate(ApplicationScreens.ScanToPay);

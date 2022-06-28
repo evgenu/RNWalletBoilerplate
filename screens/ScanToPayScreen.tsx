@@ -11,7 +11,7 @@ import { ApplicationScreens } from '../consts';
 import ApplicationContext from '../context';
 
 const ScannToPayScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
-  const { web3Provider, balance, fetchBalance } = useContext(ApplicationContext);
+  const { web3Provider, addressBalance, fetchBalance } = useContext(ApplicationContext);
   const [walletUri, setWalletUri] = useState('');
   const [scanner, setScanner] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -71,7 +71,7 @@ const ScannToPayScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>)
 
   return (
     <View style={styles.container}>
-      <Text>{!balance ? 'Loading...' : `Balance: ${balance} ETH`}</Text>
+      <Text>{!addressBalance ? 'Loading...' : `Balance: ${addressBalance} ETH`}</Text>
       <TextInput
         keyboardType="numeric"
         disabled={loading}
