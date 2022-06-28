@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 import Button from '../components/common/Button';
 import TextInput from '../components/common/TextInput';
-import QRCodeScanner from './QRCodeScanner';
-import TransactionConfirmationDialog from './TransactionConfirmationDialog';
+import QRCodeScanner from '../components/QRCodeScanner';
+import TransactionConfirmationDialog from '../components/TransactionConfirmationDialog';
 
 interface IScannToPayScreen {
   provider: Web3Provider;

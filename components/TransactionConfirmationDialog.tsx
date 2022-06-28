@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
-import Button from '../components/common/Button';
+import Button from './common/Button';
 
 interface ITransactionConfirmationDialogProps {
   open: boolean;
