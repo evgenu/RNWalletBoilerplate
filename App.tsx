@@ -11,6 +11,8 @@ import React, { useState } from 'react';
 import { Platform } from 'react-native';
 import { ApplicationScreens } from './consts';
 import ApplicationContext from './context';
+import AddBookScreen from './screens/AddBookScreen';
+import BooksOverviewScreen from './screens/BooksOverviewScreen';
 import HomeScreen from './screens/HomeScreen';
 import LibraryScreen from './screens/LibraryScreen';
 import ScannToPayScreen from './screens/ScanToPayScreen';
@@ -67,6 +69,8 @@ export default function App() {
             <Stack.Screen name={ApplicationScreens.Home} component={HomeScreen} />
             <Stack.Screen name={ApplicationScreens.ScanToPay} component={ScannToPayScreen} />
             <Stack.Screen name={ApplicationScreens.Library} component={LibraryScreen} />
+            <Stack.Screen name={ApplicationScreens.AddBook} component={AddBookScreen} />
+            <Stack.Screen name={ApplicationScreens.BooksOverview} component={BooksOverviewScreen} />
           </Stack.Navigator>
           <StatusBar style="auto" />
         </NavigationContainer>
