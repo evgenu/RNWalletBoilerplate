@@ -16,6 +16,7 @@ const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) =>
     address,
     web3Provider,
     tokenContract,
+    libraryContract,
     libraryBalance,
     setLibraryBalance,
     setLibraryContract,
@@ -28,10 +29,34 @@ const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) =>
   }, []);
 
   useEffect(() => {
-    getBalance();
+    getLibraryBalance();
   }, [tokenContract]);
 
-  const getBalance = async () => {
+  useEffect(() => {
+    unsubscribe();
+    subscribe();
+    return () => {
+      unsubscribe();
+    };
+  }, [libraryContract]);
+
+  const subscribe = () => {
+    if (libraryContract) {
+      libraryContract.on('BookAdded', getLibraryBalance);
+      libraryContract.on('BookTaken', getLibraryBalance);
+      libraryContract.on('BookReturned', getLibraryBalance);
+    }
+  };
+
+  const unsubscribe = () => {
+    if (libraryContract) {
+      libraryContract.off('BookAdded', getLibraryBalance);
+      libraryContract.off('BookTaken', getLibraryBalance);
+      libraryContract.off('BookReturned', getLibraryBalance);
+    }
+  };
+
+  const getLibraryBalance = async () => {
     if (tokenContract) {
       try {
         const libraryBalance = await tokenContract.balanceOf(process.env.LIBRARY_CONTRACT_ADDRESS);
