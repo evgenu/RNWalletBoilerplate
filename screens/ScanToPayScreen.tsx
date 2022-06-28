@@ -59,7 +59,12 @@ const ScannToPayScreen = ({ provider, onPay }: IScannToPayScreen) => {
 
   return (
     <View style={styles.container}>
-      <TextInput keyboardType="numeric" onChangeText={(text) => setAmount(text)} value={amount} />
+      <TextInput
+        keyboardType="numeric"
+        disabled={loading}
+        onChangeText={(text) => setAmount(text)}
+        value={amount}
+      />
       {!!transactionHash && (
         <Text
           style={styles.transactionLabel}
