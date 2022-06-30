@@ -77,7 +77,9 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
           />
           <Button onPress={killSession} title="Log out" style={styles.button} />
         </>
-      ) : null}
+      ) : (
+        <Text>No Web3Provider!</Text>
+      )}
     </View>
   );
 };
