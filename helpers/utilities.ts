@@ -2,6 +2,7 @@ import supportedChains from './chains';
 import Noty from 'noty';
 import '../../node_modules/noty/lib/noty.css';
 import '../../node_modules/noty/lib/themes/mint.css';
+import { INFURA_ID } from '@env';
 
 const NOTIFICATION_TIMEOUT = 3500;
 
@@ -107,7 +108,7 @@ export function getChainData(chainId: number): any {
     chainData = supportedChains[0];
   }
 
-  const API_KEY = process.env.INFURA_ID;
+  const API_KEY = INFURA_ID;
 
   if (
     chainData.rpc_url.includes('infura.io') &&

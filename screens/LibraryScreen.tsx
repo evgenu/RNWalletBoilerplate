@@ -10,6 +10,7 @@ import Button from '../components/common/Button';
 import { ApplicationScreens } from '../consts';
 import ApplicationContext from '../context';
 import { getContract } from '../helpers/ethers';
+import { LIBRARY_CONTRACT_ADDRESS, LIBRARY_TOKEN_ADDRESS } from '@env';
 
 const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   const {
@@ -59,7 +60,7 @@ const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) =>
   const getLibraryBalance = async () => {
     if (tokenContract) {
       try {
-        const libraryBalance = await tokenContract.balanceOf(process.env.LIBRARY_CONTRACT_ADDRESS);
+        const libraryBalance = await tokenContract.balanceOf(LIBRARY_CONTRACT_ADDRESS);
         setLibraryBalance(formatEther(libraryBalance));
         setLoading(false);
       } catch (error) {
@@ -71,13 +72,13 @@ const LibraryScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) =>
   const initContractInstances = () => {
     if (isAddress(address) && web3Provider) {
       const libraryContract = getContract(
-        process.env.LIBRARY_CONTRACT_ADDRESS || '',
+        LIBRARY_CONTRACT_ADDRESS || '',
         LIRARY.abi,
         web3Provider,
         address
       );
       const tokenContract = getContract(
-        process.env.LIBRARY_TOKEN_ADDRESS || '',
+        LIBRARY_TOKEN_ADDRESS || '',
         LIRARY_TOKEN.abi,
         web3Provider,
         address

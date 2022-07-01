@@ -7,6 +7,7 @@ import BookOverview from '../components/BookOverview';
 import ApplicationContext from '../context';
 import { BorrowStatus, IBook } from '../entities';
 import { prepareSignature } from '../helpers/ethers';
+import { LIBRARY_CONTRACT_ADDRESS } from '@env';
 
 const BORROW_FEE_STRING = '0.05';
 const BORROW_FEE = parseEther(BORROW_FEE_STRING);
@@ -44,7 +45,7 @@ const BooksOverviewScreen = ({ navigation }: NativeStackScreenProps<ParamListBas
   const approve = async () => {
     if (tokenContract) {
       const approveTransaction = await tokenContract.approve(
-        process.env.LIBRARY_CONTRACT_ADDRESS || '',
+        LIBRARY_CONTRACT_ADDRESS || '',
         BORROW_FEE
       );
       const approveTransactionReceipt = await approveTransaction.wait();

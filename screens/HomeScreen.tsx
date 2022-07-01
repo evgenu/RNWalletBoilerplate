@@ -9,6 +9,7 @@ import Button from '../components/common/Button';
 import { ApplicationScreens } from '../consts';
 import ApplicationContext from '../context';
 import { shortenAddress } from '../helpers/ethers';
+import { LIBRARY_CONTRACT_ADDRESS, INFURA_ID } from '@env';
 
 const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
   const {
@@ -26,7 +27,7 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
     if (connector.connected) {
       const initProvider = async () => {
         const provider = new WalletConnectProvider({
-          infuraId: process.env.INFURA_ID,
+          infuraId: INFURA_ID,
           connector,
           qrcode: false,
         });
