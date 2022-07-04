@@ -9,9 +9,14 @@ import Button from '../components/common/Button';
 import { ApplicationScreens } from '../consts';
 import ApplicationContext from '../context';
 import { shortenAddress } from '../helpers/ethers';
-import { LIBRARY_CONTRACT_ADDRESS, INFURA_ID } from '@env';
 
-const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
+interface DefaultProps {
+  infuraId: string;
+}
+
+type ComponentProps = NativeStackScreenProps<ParamListBase> & DefaultProps;
+
+const HomeScreen = ({ navigation, infuraId }: ComponentProps) => {
   const {
     web3Provider,
     address,
@@ -27,7 +32,7 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
     if (connector.connected) {
       const initProvider = async () => {
         const provider = new WalletConnectProvider({
-          infuraId: INFURA_ID,
+          infuraId: infuraId,
           connector,
           qrcode: false,
         });
@@ -113,5 +118,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
 });
+
+HomeScreen.defaultProps = {
+  infuraId: process.env.INFURA_ID,
+};
 
 export default HomeScreen;

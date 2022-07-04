@@ -3,7 +3,6 @@ import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { BigNumber, utils } from 'ethers';
-import { LIBRARY_CONTRACT_ADDRESS } from '@env';
 
 export function isAddress(value: string) {
   try {
@@ -67,7 +66,7 @@ export const prepareSignature = async (
 
   const message = {
     owner: address,
-    spender: LIBRARY_CONTRACT_ADDRESS,
+    spender: process.env.LIBRARY_CONTRACT_ADDRESS,
     value: value.toString(),
     nonce: nonce.toHexString(),
     deadline,
