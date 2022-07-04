@@ -1,5 +1,6 @@
 import './global';
 import '@ethersproject/shims';
+import 'dotenv/config';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
