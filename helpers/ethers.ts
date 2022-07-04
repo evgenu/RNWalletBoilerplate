@@ -3,6 +3,7 @@ import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { BigNumber, utils } from 'ethers';
+import { Alert } from 'react-native';
 
 export function isAddress(value: string) {
   try {
@@ -98,3 +99,15 @@ export const prepareSignature = async (
 export const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
 };
+export async function sendTransaction(functionToExecute: Function, triesToExecute: number = 0) {
+  const functionTransaction = await functionToExecute();
+  const functionReceipt = await functionTransaction.await();
+
+  if (functionReceipt !== 1 && triesToExecute === 3) {
+    Alert.alert('Transaction Failure', 'Could not send transaction', [
+      { text: 'OK', style: 'cancel' },
+    ]);
+  } else if (functionReceipt !== 1) {
+    sendTransaction(functionToExecute, (triesToExecute = triesToExecute + 1));
+  }
+}
