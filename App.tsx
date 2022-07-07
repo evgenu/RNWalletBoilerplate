@@ -1,6 +1,7 @@
 import './global';
 import '@ethersproject/shims';
 import 'dotenv/config';
+import 'expo-dev-client';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
@@ -19,6 +20,7 @@ import HomeScreen from './screens/HomeScreen';
 import LibraryScreen from './screens/LibraryScreen';
 import ScannToPayScreen from './screens/ScanToPayScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
+import WalletConnectWeb3Provider from '@walletconnect/web3-provider';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,8 @@ export default function App() {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
   const [libraryContract, setLibraryContract] = useState<Contract | null>(null);
   const [tokenContract, setTokenContract] = useState<Contract | null>(null);
+  const [walletConnectProvider, setWalletConnectProvider] =
+    useState<WalletConnectWeb3Provider | null>(null);
   const [addressBalance, setAddressBalance] = useState('');
   const [libraryBalance, setLibraryBalance] = useState('');
   const [balanceLoading, setBalanceLoading] = useState(false);
@@ -62,12 +66,14 @@ export default function App() {
           libraryContract,
           tokenContract,
           libraryBalance,
+          walletConnectProvider,
           setTokenContract,
           setLibraryContract,
           fetchBalance: getBalance,
           setAddress,
           setLibraryBalance,
           setWeb3Provider,
+          setWalletConnectProvider,
         }}
       >
         <NavigationContainer>

@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 import { Web3Provider } from '@ethersproject/providers';
 import { Contract } from '@ethersproject/contracts';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 
 interface IApplicationContext {
   web3Provider: Web3Provider | null;
@@ -10,12 +11,14 @@ interface IApplicationContext {
   balanceLoading: boolean;
   libraryContract: Contract | null;
   tokenContract: Contract | null;
-  setLibraryContract: (value: Contract) => void;
-  setTokenContract: (value: Contract) => void;
+  walletConnectProvider: WalletConnectProvider | null;
+  setLibraryContract: (value: Contract | null) => void;
+  setTokenContract: (value: Contract | null) => void;
   fetchBalance: () => Promise<void>;
   setLibraryBalance: (value: string) => void;
   setAddress: (value: string) => void;
-  setWeb3Provider: (value: Web3Provider) => void;
+  setWeb3Provider: (value: Web3Provider | null) => void;
+  setWalletConnectProvider: (value: WalletConnectProvider | null) => void;
 }
 
 const ApplicationContext = createContext<IApplicationContext>({
@@ -26,12 +29,14 @@ const ApplicationContext = createContext<IApplicationContext>({
   balanceLoading: false,
   libraryContract: null,
   tokenContract: null,
+  walletConnectProvider: null,
   setLibraryContract: () => {},
   setTokenContract: () => {},
   fetchBalance: () => Promise.resolve(),
   setAddress: () => {},
   setLibraryBalance: () => {},
   setWeb3Provider: () => {},
+  setWalletConnectProvider: () => {},
 });
 
 export default ApplicationContext;
