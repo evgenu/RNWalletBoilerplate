@@ -1,5 +1,5 @@
-import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 function Button({ onPress, label }: any) {
   return (
@@ -13,15 +13,18 @@ export default Button;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#5A45FF",
-    color: "#FFFFFF",
+    backgroundColor: '#5A45FF',
+    color: '#FFFFFF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    marginVertical: 8,
+    width: '100%',
+    alignItems: 'center',
   },
   text: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
 });
