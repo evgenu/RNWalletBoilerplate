@@ -1,6 +1,7 @@
 import './global';
 import '@ethersproject/shims';
 import 'dotenv/config';
+import 'expo-dev-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
 import { StatusBar } from 'expo-status-bar';

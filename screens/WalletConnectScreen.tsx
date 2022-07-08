@@ -4,9 +4,11 @@ import { useWalletConnect } from '@walletconnect/react-native-dapp';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Button from '../components/Button';
 import LoginButton from '../components/LoginButton';
 import LoginTitle from '../components/LoginTitle';
 import LogoutButton from '../components/LogoutButton';
+import Web3AuthScreen from './Web3AuthScreen';
 
 const shortenAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(address.length - 4, address.length)}`;
@@ -18,6 +20,7 @@ export default function WalletConnectExperience() {
   const [address, setAddress] = React.useState('');
   const [balance, setBalance] = React.useState('');
   const [loading, setLoading] = React.useState(true);
+  const [web3AuthOpened, setWeb3AuthOpened] = React.useState(false);
 
   React.useEffect(() => {
     if (connector.connected) {
@@ -63,13 +66,18 @@ export default function WalletConnectExperience() {
     return connector.killSession();
   }, [connector]);
 
+  if (web3AuthOpened) {
+    return <Web3AuthScreen onClose={() => setWeb3AuthOpened(false)} />;
+  }
+
   return (
     <>
       {!connector.connected ? (
-        <>
+        <View style={styles.loginContainer}>
           <LoginTitle />
           <LoginButton onPress={connectWallet} />
-        </>
+          <Button label="Web3AuthLogin" onPress={() => setWeb3AuthOpened(true)} />
+        </View>
       ) : (
         <>
           <View style={styles.accountInformationContainer}>
@@ -102,6 +110,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loginContainer: {
+    flex: 1,
+    width: '100%',
+    padding: 8,
   },
   accountInformation: {
     textAlign: 'center',
