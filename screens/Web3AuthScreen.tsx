@@ -3,9 +3,11 @@ import { Buffer } from 'buffer';
 import Constants, { AppOwnership } from 'expo-constants';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
+import jwtDecode from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
+import JWTTokenData from '../types/JWTTokenData';
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -23,7 +25,9 @@ interface IWeb3AuthScreen {
 
 const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
   const [key, setKey] = useState('');
+  const [idToken, setIdToken] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [tokenData, setTokenData] = useState<JWTTokenData | null>(null);
 
   useEffect(() => {
     web3auth = new Web3Auth(WebBrowser, {
@@ -32,9 +36,18 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (idToken) {
+      const tokenDecoded: JWTTokenData = jwtDecode(idToken);
+      setTokenData(tokenDecoded);
+    }
+  }, [idToken]);
+
   const resetState = () => {
     setKey('');
     setErrorMsg('');
+    setIdToken('');
+    setTokenData(null);
   };
 
   const handleLogin = async () => {
@@ -45,6 +58,7 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
       });
       console.log('Auth State -> ', state);
       setKey(state.privKey || 'no key');
+      setIdToken((state.userInfo as any)?.idToken);
     } catch (error) {
       console.error(error);
       setErrorMsg(String(error));
@@ -68,7 +82,7 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
       <Text>Key: {key || 'N/A'}</Text>
       {!!errorMsg && <Text>Error: {errorMsg}</Text>}
       <Text>Linking URL: {resolvedRedirectUrl}</Text>
-      <Button label="Login with Web3Auth" onPress={handleLogin} />
+      {!key && <Button label="Login with Web3Auth" onPress={handleLogin} />}
       {!!key && <Button label="Logout" onPress={handleLogout} />}
       <Button label="Back" onPress={onClose} />
     </View>
