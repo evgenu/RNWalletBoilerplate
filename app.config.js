@@ -18,6 +18,7 @@ export default {
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
+    bundleIdentifier: 'contract.test',
   },
   android: {
     adaptiveIcon: {
