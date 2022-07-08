@@ -52,11 +52,11 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
   };
 
   const handleLogout = async () => {
-    resetState();
     try {
       await web3auth.logout({
         redirectUrl: resolvedRedirectUrl,
       });
+      resetState();
     } catch (error) {
       console.error(error);
       setErrorMsg(String(error));
