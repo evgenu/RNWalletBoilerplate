@@ -1,10 +1,9 @@
-import Web3Auth, { LOGIN_PROVIDER, OPENLOGIN_NETWORK } from '@web3auth/react-native-sdk';
+import Web3Auth, { OPENLOGIN_NETWORK } from '@web3auth/react-native-sdk';
 import { Buffer } from 'buffer';
 import Constants, { AppOwnership } from 'expo-constants';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
 
@@ -33,18 +32,18 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (key) {
-    }
-  }, [key]);
+  const resetState = () => {
+    setKey('');
+    setErrorMsg('');
+  };
 
   const handleLogin = async () => {
-    setErrorMsg('');
+    resetState();
     try {
       const state = await web3auth.login({
-        loginProvider: LOGIN_PROVIDER.GOOGLE,
         redirectUrl: resolvedRedirectUrl,
       });
+      console.log('Auth State -> ', state);
       setKey(state.privKey || 'no key');
     } catch (error) {
       console.error(error);
@@ -53,7 +52,7 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
   };
 
   const handleLogout = async () => {
-    setKey('');
+    resetState();
     try {
       await web3auth.logout({
         redirectUrl: resolvedRedirectUrl,
@@ -66,8 +65,8 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
 
   return (
     <View style={styles.container}>
-      <Text>Key: {key}</Text>
-      <Text>Error: {errorMsg}</Text>
+      <Text>Key: {key || 'N/A'}</Text>
+      {!!errorMsg && <Text>Error: {errorMsg}</Text>}
       <Text>Linking URL: {resolvedRedirectUrl}</Text>
       <Button label="Login with Web3Auth" onPress={handleLogin} />
       {!!key && <Button label="Logout" onPress={handleLogout} />}
@@ -81,8 +80,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     width: '100%',
   },
 });
