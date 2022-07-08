@@ -1,13 +1,16 @@
 import { Wallet } from '@ethersproject/wallet';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Web3Auth, { OPENLOGIN_NETWORK } from '@web3auth/react-native-sdk';
 import { Buffer } from 'buffer';
 import Constants, { AppOwnership } from 'expo-constants';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import jwtDecode from 'jwt-decode';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/common/Button';
+import ApplicationContext from '../context';
 import JWTTokenData from '../types/JWTTokenData';
 
 global.Buffer = global.Buffer || Buffer;
@@ -20,16 +23,11 @@ const resolvedRedirectUrl =
     ? Linking.createURL('web3auth', {})
     : Linking.createURL('web3auth', { scheme: scheme });
 
-interface IWeb3AuthScreen {
-  onClose: () => void;
-}
-
-const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
-  const [key, setKey] = useState('');
+const Web3AuthScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
+  const { web3AuthWallet, setWeb3AuthWallet } = useContext(ApplicationContext);
   const [idToken, setIdToken] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [_, setTokenData] = useState<JWTTokenData | null>(null);
-  const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
     web3auth = new Web3Auth(WebBrowser, {
@@ -46,10 +44,10 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
   }, [idToken]);
 
   const resetState = () => {
-    setKey('');
     setErrorMsg('');
     setIdToken('');
     setTokenData(null);
+    setWeb3AuthWallet(null);
   };
 
   const handleLogin = async () => {
@@ -60,8 +58,7 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
       });
       let privateKey = state.privKey || '';
       const wallet = new Wallet(privateKey);
-      setKey(privateKey || 'no key');
-      setWallet(wallet);
+      setWeb3AuthWallet(wallet);
 
       setIdToken((state.userInfo as any)?.idToken);
     } catch (error) {
@@ -84,13 +81,11 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
 
   return (
     <View style={styles.container}>
-      <Text>Key: {key || 'N/A'}</Text>
-      <Text>Address: {wallet ? wallet.address : 'N/A'}</Text>
+      <Text style={styles.text}>Address: {web3AuthWallet ? web3AuthWallet.address : 'N/A'}</Text>
       {!!errorMsg && <Text>Error: {errorMsg}</Text>}
-      <Text>Linking URL: {resolvedRedirectUrl}</Text>
-      {!key && <Button title="Login with Web3Auth" onPress={handleLogin} />}
-      {!!key && <Button title="Logout" onPress={handleLogout} />}
-      <Button title="Back" onPress={onClose} />
+      {!web3AuthWallet && <Button style={styles.button} title="Login" onPress={handleLogin} />}
+      {!!web3AuthWallet && <Button style={styles.button} title="Logout" onPress={handleLogout} />}
+      <Button style={styles.button} title="Back" onPress={() => navigation.goBack()} />
     </View>
   );
 };
@@ -102,6 +97,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 8,
     width: '100%',
+  },
+  button: {
+    width: '100%',
+    marginVertical: 8,
+  },
+  text: {
+    textAlign: 'center',
   },
 });
 

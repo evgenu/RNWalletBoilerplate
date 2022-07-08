@@ -1,7 +1,7 @@
 import supportedChains from './chains';
-import Noty from 'noty';
-import '../../node_modules/noty/lib/noty.css';
-import '../../node_modules/noty/lib/themes/mint.css';
+// import Noty from 'noty';
+// import '../../node_modules/noty/lib/noty.css';
+// import '../../node_modules/noty/lib/themes/mint.css';
 
 const NOTIFICATION_TIMEOUT = 3500;
 
@@ -125,10 +125,10 @@ export function getChainData(chainId: number): any {
   return chainData;
 }
 
-export function showNotification(text: string) {
-  new Noty({
-    text,
-    timeout: NOTIFICATION_TIMEOUT,
-    type: 'success',
-  }).show();
-}
+// export function showNotification(text: string) {
+//   new Noty({
+//     text,
+//     timeout: NOTIFICATION_TIMEOUT,
+//     type: 'success',
+//   }).show();
+// }

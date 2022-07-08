@@ -5,10 +5,12 @@ import 'expo-dev-client';
 import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
 import { formatEther } from '@ethersproject/units';
+import { Wallet } from '@ethersproject/wallet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WalletConnectProvider from '@walletconnect/react-native-dapp';
+import WalletConnectWeb3Provider from '@walletconnect/web3-provider';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
@@ -19,8 +21,8 @@ import BooksOverviewScreen from './screens/BooksOverviewScreen';
 import HomeScreen from './screens/HomeScreen';
 import LibraryScreen from './screens/LibraryScreen';
 import ScannToPayScreen from './screens/ScanToPayScreen';
+import Web3AuthScreen from './screens/Web3AuthScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
-import WalletConnectWeb3Provider from '@walletconnect/web3-provider';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +32,7 @@ export default function App() {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
   const [libraryContract, setLibraryContract] = useState<Contract | null>(null);
   const [tokenContract, setTokenContract] = useState<Contract | null>(null);
+  const [web3AuthWallet, setWeb3AuthWallet] = useState<Wallet | null>(null);
   const [walletConnectProvider, setWalletConnectProvider] =
     useState<WalletConnectWeb3Provider | null>(null);
   const [addressBalance, setAddressBalance] = useState('');
@@ -67,6 +70,7 @@ export default function App() {
           tokenContract,
           libraryBalance,
           walletConnectProvider,
+          web3AuthWallet,
           setTokenContract,
           setLibraryContract,
           fetchBalance: getBalance,
@@ -74,6 +78,7 @@ export default function App() {
           setLibraryBalance,
           setWeb3Provider,
           setWalletConnectProvider,
+          setWeb3AuthWallet,
         }}
       >
         <NavigationContainer>
@@ -81,6 +86,11 @@ export default function App() {
             <Stack.Screen
               name={ApplicationScreens.Welcome}
               component={WelcomeScreen}
+              options={{ header: () => null }}
+            />
+            <Stack.Screen
+              name={ApplicationScreens.Web3Auth}
+              component={Web3AuthScreen}
               options={{ header: () => null }}
             />
             <Stack.Screen name={ApplicationScreens.Home} component={HomeScreen} />

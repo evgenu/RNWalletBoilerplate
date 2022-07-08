@@ -30,9 +30,16 @@ const WelcomeScreen = ({ navigation }: NativeStackScreenProps<ParamListBase>) =>
       {!connector.connected && !loading && (
         <>
           <LoginTitle />
-          <Button onPress={connectWallet} title="Connect a wallet" />
+          <Button style={styles.button} onPress={connectWallet} title="Connect a wallet" />
         </>
       )}
+      <Button
+        style={styles.button}
+        onPress={() => {
+          navigation.navigate(ApplicationScreens.Web3Auth);
+        }}
+        title="Connect with Web3Auth"
+      />
       {connector.connected && loading && <Text>Loading...</Text>}
     </View>
   );
@@ -47,6 +54,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
+  },
+  button: {
+    width: '100%',
+    marginVertical: 8,
   },
 });
 
