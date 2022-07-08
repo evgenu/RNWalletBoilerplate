@@ -7,7 +7,7 @@ import * as WebBrowser from 'expo-web-browser';
 import jwtDecode from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Button from '../components/Button';
+import Button from '../components/common/Button';
 import JWTTokenData from '../types/JWTTokenData';
 
 global.Buffer = global.Buffer || Buffer;
@@ -88,9 +88,9 @@ const Web3AuthScreen = ({ onClose }: IWeb3AuthScreen) => {
       <Text>Address: {wallet ? wallet.address : 'N/A'}</Text>
       {!!errorMsg && <Text>Error: {errorMsg}</Text>}
       <Text>Linking URL: {resolvedRedirectUrl}</Text>
-      {!key && <Button label="Login with Web3Auth" onPress={handleLogin} />}
-      {!!key && <Button label="Logout" onPress={handleLogout} />}
-      <Button label="Back" onPress={onClose} />
+      {!key && <Button title="Login with Web3Auth" onPress={handleLogin} />}
+      {!!key && <Button title="Logout" onPress={handleLogout} />}
+      <Button title="Back" onPress={onClose} />
     </View>
   );
 };
